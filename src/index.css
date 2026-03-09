@@ -1,0 +1,84 @@
+ @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 214 80% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 214 60% 95%;
+    --secondary-foreground: 214 80% 40%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 15% 50%;
+
+    --accent: 214 60% 95%;
+    --accent-foreground: 214 80% 40%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 214 80% 52%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 215 25% 30%;
+    --sidebar-primary: 214 80% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 60% 95%;
+    --sidebar-accent-foreground: 214 80% 40%;
+    --sidebar-border: 214 20% 92%;
+    --sidebar-ring: 214 80% 52%;
+
+    --gradient-start: 214 80% 52%;
+    --gradient-end: 214 60% 68%;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(214 80% 52%), hsl(214 60% 68%));
+  }
+  
+  .gradient-cover {
+    background: linear-gradient(135deg, hsl(214 80% 52%), hsl(200 70% 60%));
+  }
+
+  .shadow-card {
+    box-shadow: 0 1px 3px 0 hsl(214 20% 50% / 0.08), 0 1px 2px -1px hsl(214 20% 50% / 0.08);
+  }
+
+  .shadow-card-hover {
+    box-shadow: 0 4px 12px 0 hsl(214 20% 50% / 0.12), 0 2px 4px -1px hsl(214 20% 50% / 0.08);
+  }
+}
