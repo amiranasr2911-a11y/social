@@ -3,13 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { Image, Smile, Send, Search, UserPlus, Bookmark, Users, Newspaper, FileText, Loader2, Globe, UserCheck, Lock, ChevronDown } from "lucide-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/context/AuthContext";
-import { postsApi, usersApi } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
-import PostCard from "@/components/feed/PostCard";
-import ShareDialog from "@/components/feed/ShareDialog";
+import { Button } from "../components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { useAuth } from "../context/AuthContext";
+import { postsApi, usersApi } from "../lib/api";
+import { useToast } from "../hooks/use-toast";
+import PostCard from "../components/feed/PostCard";
+import ShareDialog from "../components/feed/ShareDialog";
 
 type FeedFilter = "community" | "my_posts" | "saved";
 
@@ -88,7 +88,7 @@ const Feed = () => {
       await postsApi.create(formData);
       setPostText("");
       setPostImage(null);
-      toast({ title: "تم النشر ✅" });
+      toast({ title: " " });
       fetchPosts();
     } catch (err: any) {
       toast({ title: "خطأ", description: err.message, variant: "destructive" });
@@ -102,10 +102,10 @@ const Feed = () => {
   const handleShare = async (postId: string, body: string) => {
     try {
       await postsApi.share(postId, body);
-      toast({ title: "تم المشاركة ✅" });
+      toast({ title: "" });
       fetchPosts();
     } catch (err: any) {
-      toast({ title: "خطأ", description: err.message, variant: "destructive" });
+      toast({ title: "", description: err.message, variant: "destructive" });
     }
   };
 

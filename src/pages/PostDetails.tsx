@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { postsApi } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
-import PostCard from "@/components/feed/PostCard";
-import ShareDialog from "@/components/feed/ShareDialog";
+import { postsApi } from "../lib/api";
+import { useToast } from "../hooks/use-toast";
+import PostCard from "../components/feed/PostCard";
+import ShareDialog from "../components/feed/ShareDialog";
 
 const PostDetails = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -33,7 +33,7 @@ const PostDetails = () => {
   const handleShare = async (id: string, body: string) => {
     try {
       await postsApi.share(id, body);
-      toast({ title: "تم المشاركة ✅" });
+      toast({ title: "" });
       fetchPost();
     } catch (err: any) {
       toast({ title: "خطأ", description: err.message, variant: "destructive" });

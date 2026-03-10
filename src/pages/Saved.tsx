@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Loader2, Bookmark } from "lucide-react";
-import { usersApi } from "@/lib/api";
-import PostCard from "@/components/feed/PostCard";
-import ShareDialog from "@/components/feed/ShareDialog";
-import { postsApi } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
+import { usersApi } from "../lib/api";
+import PostCard from "../components/feed/PostCard";
+import ShareDialog from "../components/feed/ShareDialog";
+import { postsApi } from "../lib/api";
+import { useToast } from "../hooks/use-toast";
 
 const Saved = () => {
   const { toast } = useToast();

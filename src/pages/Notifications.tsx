@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Check, MessageCircle, Heart, UserPlus, Share2, Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { notificationsApi } from "@/lib/api";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { notificationsApi } from "../lib/api";
 import { formatDistanceToNow } from "date-fns";
 
 const notificationIcon = (type: string) => {

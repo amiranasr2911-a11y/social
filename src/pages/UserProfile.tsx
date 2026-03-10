@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Loader2, UserPlus, UserCheck } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { usersApi, postsApi } from "@/lib/api";
-import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-import PostCard from "@/components/feed/PostCard";
-import ShareDialog from "@/components/feed/ShareDialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Button } from "../components/ui/button";
+import { usersApi, postsApi } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "../hooks/use-toast";
+import PostCard from "../components/feed/PostCard";
+import ShareDialog from "../components/feed/ShareDialog";
 
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>();

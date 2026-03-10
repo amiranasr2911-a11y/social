@@ -1,13 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Mail, Users, FileText, Bookmark, Loader2, Camera, ZoomIn, ImagePlus, UserCircle } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { usersApi, postsApi } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "../context/AuthContext";
+import { usersApi, postsApi } from "../lib/api";
+import { useToast } from "../hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
-import PostCard from "@/components/feed/PostCard";
-import ShareDialog from "@/components/feed/ShareDialog";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import PostCard from "../components/feed/PostCard";
+import ShareDialog from "../components/feed/ShareDialog";
+import { Dialog, DialogContent } from "../components/ui/dialog";
 
 const Profile = () => {
   const { user, refreshUser } = useAuth();
@@ -53,19 +53,19 @@ const Profile = () => {
     try {
       await usersApi.uploadPhoto(formData);
       await refreshUser();
-      toast({ title: "تم تحديث الصورة ✅" });
+      toast({ title: "" });
     } catch {
-      toast({ title: "خطأ في رفع الصورة", variant: "destructive" });
+      toast({ title: "", variant: "destructive" });
     }
   };
 
   const handleShare = async (id: string, body: string) => {
     try {
       await postsApi.share(id, body);
-      toast({ title: "تم المشاركة ✅" });
+      toast({ title: "" });
       fetchData();
     } catch (err: any) {
-      toast({ title: "خطأ", description: err.message, variant: "destructive" });
+      toast({ title: "", description: err.message, variant: "destructive" });
     }
   };
 
@@ -79,7 +79,7 @@ const Profile = () => {
       if (user?._id) {
         localStorage.setItem(`cover_${user._id}`, result);
       }
-      toast({ title: "تم تحديث صورة الغلاف ✅" });
+      toast({ title: "" });
     };
     reader.readAsDataURL(file);
   };
