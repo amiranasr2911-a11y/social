@@ -1,13 +1,53 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThumbsUp, MessageCircle, Share2, Send, Loader2, Bookmark, BookmarkCheck, Image as ImageIcon, Smile, Reply, X, Repeat2, MoreHorizontal, Users, Pencil, Trash2, AlertTriangle } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../.././components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { postsApi } from "@/lib/api";
-import { useAuth } from "@/context/AuthContext";
+import { postsApi } from "../../lib/api";
+import { useAuth } from "../.././context/AuthContext";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 
+// =============================================
+// Shared Post Embed Component
+// =============================================
+const SharedPostEmbed = ({ sharedPost }: { sharedPost: any }) => {
+  if (!sharedPost) return null;
+  return (
+    <div className="border border-border rounded-xl p-4 bg-muted/30 space-y-2 mt-1">
+      <div className="flex items-center gap-2">
+        <Avatar className="h-8 w-8">
+          <AvatarImage src={sharedPost.user?.photo || undefined} />
+          <AvatarFallback className="bg-accent text-accent-foreground text-xs">
+            {sharedPost.user?.name?.charAt(0)?.toUpperCase() || "?"}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="text-sm font-semibold text-foreground">{sharedPost.user?.name}</p>
+          <p className="text-xs text-muted-foreground">
+            {sharedPost.createdAt
+              ? formatDistanceToNow(new Date(sharedPost.createdAt), { addSuffix: true })
+              : ""}
+          </p>
+        </div>
+      </div>
+      {sharedPost.body && (
+        <p className="text-sm text-foreground">{sharedPost.body}</p>
+      )}
+      {sharedPost.image && (
+        <img
+          src={sharedPost.image}
+          alt="shared post"
+          className="w-full rounded-lg max-h-60 object-cover"
+        />
+      )}
+    </div>
+  );
+};
+
+// =============================================
+// Comment Input Component
+// =============================================
 interface CommentInputProps {
   placeholder: string;
   onSubmit: (content: string, image: File | null) => Promise<void>;
@@ -72,6 +112,9 @@ const CommentInput = ({ placeholder, onSubmit, loading }: CommentInputProps) => 
   );
 };
 
+// =============================================
+// PostCard Component
+// =============================================
 interface PostCardProps {
   post: any;
   onPostUpdated: () => void;
@@ -214,11 +257,12 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
 
   return (
     <div className="bg-card rounded-2xl shadow-card p-5 space-y-3">
+      {/* Post Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to={`/user/${post.user?._id}`}>
             <Avatar className="h-10 w-10">
-              <AvatarImage src={post.user?.photo || ""} />
+              <AvatarImage src={post.user?.photo || undefined} />
               <AvatarFallback className="bg-accent text-accent-foreground text-sm">
                 {post.user?.name?.charAt(0) || "?"}
               </AvatarFallback>
@@ -285,6 +329,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
         </span>
       )}
 
+      {/* Post Body */}
       {editing ? (
         <div className="space-y-3">
           <textarea
@@ -293,10 +338,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
             className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary transition-colors resize-y min-h-[80px]"
           />
           <div className="flex items-center justify-end gap-2">
-            <button
-              onClick={() => setEditing(false)}
-              className="px-5 py-2 text-sm font-medium text-foreground bg-muted hover:bg-muted/80 rounded-lg transition-colors"
-            >
+            <button onClick={() => setEditing(false)} className="px-5 py-2 text-sm font-medium text-foreground bg-muted hover:bg-muted/80 rounded-lg transition-colors">
               Cancel
             </button>
             <button
@@ -319,11 +361,19 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
         </div>
       ) : (
         <>
+          {/* Caption / body */}
           {post.body && <p className="text-sm text-foreground">{post.body}</p>}
+
+          {/* ✅ Shared post embed */}
+          {post.isShare && post.sharedPost && (
+            <SharedPostEmbed sharedPost={post.sharedPost} />
+          )}
+
+          {/* Regular post image (not shared) */}
+          {!post.isShare && post.image && (
+            <img src={post.image} alt="post" className="w-full rounded-xl object-cover max-h-96" />
+          )}
         </>
-      )}
-      {post.image && (
-        <img src={post.image} alt="post" className="w-full rounded-xl object-cover max-h-96" />
       )}
 
       {/* Stats row */}
@@ -373,14 +423,14 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
         </button>
       </div>
 
-      {/* Top Comment preview (when comments section is closed) */}
+      {/* Top Comment preview */}
       {!showComments && post.topComment && (
         <div className="border border-border rounded-2xl p-4 space-y-3">
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Top Comment</p>
           <div className="flex gap-3 items-start">
             <Link to={`/user/${post.topComment.commentCreator?._id}`}>
               <Avatar className="h-9 w-9">
-                <AvatarImage src={post.topComment.commentCreator?.photo || ""} />
+                <AvatarImage src={post.topComment.commentCreator?.photo || undefined} />
                 <AvatarFallback className="bg-accent text-accent-foreground text-xs">
                   {post.topComment.commentCreator?.name?.charAt(0) || "?"}
                 </AvatarFallback>
@@ -404,7 +454,6 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
       {/* Comments section */}
       {showComments && (
         <div className="border-t pt-3 space-y-3">
-          {/* Comments header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-foreground">Comments</span>
@@ -414,7 +463,6 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
             </div>
           </div>
 
-          {/* Comments list */}
           {loadingComments ? (
             <div className="text-center py-3">
               <Loader2 className="animate-spin mx-auto text-muted-foreground" size={20} />
@@ -427,7 +475,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                 <div className="flex gap-3">
                   <Link to={`/user/${comment.commentCreator?._id}`}>
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={comment.commentCreator?.photo || ""} />
+                      <AvatarImage src={comment.commentCreator?.photo || undefined} />
                       <AvatarFallback className="bg-accent text-accent-foreground text-xs">
                         {comment.commentCreator?.name?.charAt(0) || "?"}
                       </AvatarFallback>
@@ -447,13 +495,9 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                       )}
                     </div>
                     <div className="flex items-center gap-4 mt-1 px-1">
-                      <span className="text-xs text-primary">
-                        {comment.createdAt ? formatDistanceToNow(new Date(comment.createdAt), { addSuffix: false }) : ""}
-                      </span>
                       <button onClick={() => handleLikeComment(comment._id)} className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors">
                         Like ({comment.likes?.length || 0})
                       </button>
-                      {/* Show/Hide replies toggle */}
                       {((comment.repliesCount > 0) || repliedComments.has(comment._id)) && (
                         <button
                           onClick={() => {
@@ -470,7 +514,6 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                       )}
                     </div>
 
-                    {/* Replies */}
                     {loadingReplies[comment._id] && (
                       <div className="mt-2 ml-6"><Loader2 size={14} className="animate-spin text-muted-foreground" /></div>
                     )}
@@ -480,7 +523,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                           <div key={reply._id} className="flex gap-2">
                             <Link to={`/user/${reply.commentCreator?._id}`}>
                               <Avatar className="h-7 w-7">
-                                <AvatarImage src={reply.commentCreator?.photo || ""} />
+                                <AvatarImage src={reply.commentCreator?.photo || undefined} />
                                 <AvatarFallback className="bg-accent text-accent-foreground text-[10px]">
                                   {reply.commentCreator?.name?.charAt(0) || "?"}
                                 </AvatarFallback>
@@ -510,7 +553,6 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                       </div>
                     )}
 
-                    {/* Reply input */}
                     <div className="mt-2">
                       <button
                         onClick={() => setReplyingTo(replyingTo === comment._id ? null : comment._id)}
@@ -525,7 +567,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                         <p className="text-xs text-muted-foreground italic px-1">Replying to {comment.commentCreator?.name}</p>
                         <div className="flex gap-2">
                           <Avatar className="h-7 w-7 mt-1">
-                            <AvatarImage src={user?.photo || ""} />
+                            <AvatarImage src={user?.photo || undefined} />
                             <AvatarFallback className="bg-accent text-accent-foreground text-[10px]">
                               {user?.name?.charAt(0) || "U"}
                             </AvatarFallback>
@@ -555,10 +597,9 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
             </button>
           )}
 
-          {/* Add comment input */}
           <div className="flex gap-2 pt-1">
             <Avatar className="h-8 w-8 mt-1">
-              <AvatarImage src={user?.photo || ""} />
+              <AvatarImage src={user?.photo || undefined} />
               <AvatarFallback className="bg-accent text-accent-foreground text-xs">
                 {user?.name?.charAt(0) || "U"}
               </AvatarFallback>
@@ -602,7 +643,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                     className="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-muted transition-colors"
                   >
                     <Avatar className="h-12 w-12">
-                      <AvatarImage src={liker.photo || ""} />
+                      <AvatarImage src={liker.photo || undefined} />
                       <AvatarFallback className="bg-accent text-accent-foreground text-sm">
                         {liker.name?.charAt(0) || "?"}
                       </AvatarFallback>
@@ -619,7 +660,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
         </div>
       )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={() => setShowDeleteConfirm(false)} />
@@ -641,10 +682,7 @@ const PostCard = ({ post, onPostUpdated, onShareClick, defaultShowComments = fal
                 </div>
               </div>
               <div className="flex items-center justify-end gap-3">
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="px-5 py-2.5 text-sm font-medium text-foreground bg-muted hover:bg-muted/80 rounded-lg transition-colors"
-                >
+                <button onClick={() => setShowDeleteConfirm(false)} className="px-5 py-2.5 text-sm font-medium text-foreground bg-muted hover:bg-muted/80 rounded-lg transition-colors">
                   Cancel
                 </button>
                 <button

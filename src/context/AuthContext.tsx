@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { usersApi } from "@/lib/api";
+import { usersApi } from "../lib/api";
 
 interface User {
   _id: string;
@@ -8,6 +8,10 @@ interface User {
   photo?: string;
   gender?: string;
   dateOfBirth?: string;
+  followersCount?: number;
+  followingCount?: number;
+  followers?: any[];
+  following?: any[];
   [key: string]: any;
 }
 

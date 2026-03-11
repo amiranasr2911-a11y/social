@@ -36,13 +36,11 @@ const Notifications = () => {
   const fetchNotifications = async (currentFilter: "all" | "unread") => {
     setLoading(true);
     try {
-      // If unread, pass true, else pass undefined to get all notifications
       const unreadParam = currentFilter === "unread" ? true : undefined;
       const data = await notificationsApi.getAll(1, 20, unreadParam);
       const notifs = data?.notifications || (Array.isArray(data) ? data : []);
       setNotifications(notifs);
     } catch {
-      // silent
     } finally {
       setLoading(false);
     }

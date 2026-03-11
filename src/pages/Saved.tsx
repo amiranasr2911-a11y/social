@@ -30,7 +30,7 @@ const Saved = () => {
   const handleShare = async (postId: string, body: string) => {
     try {
       await postsApi.share(postId, body);
-      toast({ title: "تم المشاركة ✅" });
+      toast({ title: "تم المشاركة " });
       fetchBookmarks();
     } catch (err: any) {
       toast({ title: "خطأ", description: err.message, variant: "destructive" });

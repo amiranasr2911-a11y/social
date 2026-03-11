@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, User, Bell, Settings, LogOut, Menu } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/context/AuthContext";
-import { notificationsApi } from "@/lib/api";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { useAuth } from "../../context/AuthContext";
+import { notificationsApi } from "../../lib/api";
 
 const navItems = [
   { label: "Feed", icon: Home, path: "/feed" },
@@ -21,13 +21,25 @@ const Navbar = () => {
   useEffect(() => {
     if (user) {
       notificationsApi.getUnreadCount()
-        .then(data => {
-          const count = typeof data === 'number' ? data : (data?.count || 0);
+        .then((data) => {
+          // API returns: { success, message, data: { unreadCount: N } }
+          const count =
+            data?.data?.unreadCount ??  
+            data?.unreadCount ??
+            data?.count ??
+            (typeof data === "number" ? data : 0);
           setUnreadCount(count);
         })
         .catch(() => {});
     }
-  }, [user, location.pathname]); // Refresh on route change
+  }, [user, location.pathname]);
+
+  // Reset badge when user opens notifications page
+  useEffect(() => {
+    if (location.pathname === "/notifications") {
+      setUnreadCount(0);
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -64,7 +76,7 @@ const Navbar = () => {
                   <item.icon size={18} />
                   {item.label === "Notifications" && unreadCount > 0 && (
                     <span className="absolute -top-2 -right-2.5 bg-red-500 text-white text-[9px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center ring-2 ring-card">
-                      {unreadCount > 99 ? '99+' : unreadCount}
+                      {unreadCount > 99 ? "99+" : unreadCount}
                     </span>
                   )}
                 </div>
@@ -80,7 +92,7 @@ const Navbar = () => {
             className="flex items-center gap-2 hover:bg-muted rounded-full p-1 pr-3 transition-colors"
           >
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.photo || ""} />
+              <AvatarImage src={user?.photo || undefined} />
               <AvatarFallback className="gradient-primary text-primary-foreground text-xs">{initials}</AvatarFallback>
             </Avatar>
             <span className="text-sm font-medium text-foreground hidden md:block">{user?.name || "User"}</span>
